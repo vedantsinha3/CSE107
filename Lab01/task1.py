@@ -67,25 +67,3 @@ for r in range(rows_cw):
             max_val_cw = val
 
 print("Max of clockwise rotated grayscale image:", max_val_cw)
-
-# Import pillow
-from PIL import Image, ImageOps
-# Import numpy
-import numpy as np
-from numpy import asarray
-# Read the image from file.
-im = Image.open('Beginnings.jpg')
-# Show the image.
-im.show()
-# Convert image to gray scale.
-im_gray = ImageOps.grayscale(im)
-# Show the grayscale image.
-im_gray.show()
-# Convert image to numpy array
-im_array = asarray(im_gray)
-# Print the shape of the image
-print(im_array.shape)
-# Print the type of the image
-print(im_array.dtype)
-# Print the minimum and maximum values of the image
-print(im_array.min(), im_array.max())
