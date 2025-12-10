@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5: Hough Transform</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=Source+Sans+Pro:wght@400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Source Sans Pro', 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.75in;
+            background: #fff;
+        }
+        
+        h1 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 28px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #2c5aa0;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c5aa0;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        
+        h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #444;
+            margin-top: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .header-info {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        
+        .header-info p {
+            margin: 3px 0;
+        }
+        
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        
+        .abstract {
+            background: #f8f9fa;
+            padding: 15px 20px;
+            border-left: 4px solid #2c5aa0;
+            margin: 15px 0;
+            font-style: italic;
+        }
+        
+        .results-box {
+            background: #f0f4f8;
+            padding: 12px 18px;
+            border-radius: 6px;
+            margin: 15px 0;
+        }
+        
+        .results-box strong {
+            color: #2c5aa0;
+        }
+        
+        .image-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .image-box {
+            text-align: center;
+        }
+        
+        .image-box img {
+            max-width: 250px;
+            height: auto;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .image-box p {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+            text-align: center;
+        }
+        
+        .caption {
+            font-size: 13px;
+            color: #555;
+            text-align: center;
+            margin: 10px 20px 20px 20px;
+            font-style: italic;
+        }
+        
+        .question {
+            margin: 20px 0;
+        }
+        
+        .question h3 {
+            color: #2c5aa0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        
+        th {
+            background: #2c5aa0;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 11px;
+            line-height: 1.4;
+            margin: 15px 0;
+        }
+        
+        code {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
+        
+        .keyword { color: #569cd6; }
+        .string { color: #ce9178; }
+        .comment { color: #6a9955; }
+        .function { color: #dcdcaa; }
+        .number { color: #b5cea8; }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            body {
+                padding: 0.5in;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            pre {
+                font-size: 9px;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Lab 5: Hough Transform</h1>
+    
+    <div class="header-info">
+        <p><strong>Name:</strong> Vedant Sinha</p>
+        <p><strong>Lab Section:</strong> Thursday 10:30 AM - 1:20 PM</p>
+        <p><strong>Date:</strong> December 10, 2025</p>
+    </div>
+    
+    <h2>Abstract</h2>
+    <div class="abstract">
+        The purpose of this lab is to implement the Hough transform for line detection in images. The Hough transform is a global image processing technique that converts edge points from image space (x, y coordinates) to parameter space (theta, rho).
+    </div>
+    
+    <h2>Results: Random Line Detection</h2>
+    
+    <h3>Random Line Test 1</h3>
+    <div class="results-box">
+        <strong>True theta = 17°, True rho = 51</strong><br>
+        <strong>Estimated theta = 17°, Estimated rho = 50</strong>
+    </div>
+    
+    <div class="image-container">
+        <div class="image-box">
+            <img src="random_line_1.png" alt="Random Line 1 Edge Image">
+            <p>Edge Image</p>
+        </div>
+        <div class="image-box">
+            <img src="random_line_accumulator_1.png" alt="Random Line 1 Accumulator">
+            <p>Accumulator Image</p>
+        </div>
+    </div>
+    <p class="caption">Figure 1: Random line test 1. Left: Edge image showing a line with theta=17° and rho=51. Right: Log-scaled accumulator matrix showing the voting results, with the brightest point indicating the detected line parameters.</p>
+    
+    <h3>Random Line Test 2</h3>
+    <div class="results-box">
+        <strong>True theta = 26°, True rho = 36</strong><br>
+        <strong>Estimated theta = 26°, Estimated rho = 35</strong>
+    </div>
+    
+    <div class="image-container">
+        <div class="image-box">
+            <img src="random_line_2.png" alt="Random Line 2 Edge Image">
+            <p>Edge Image</p>
+        </div>
+        <div class="image-box">
+            <img src="random_line_accumulator_2.png" alt="Random Line 2 Accumulator">
+            <p>Accumulator Image</p>
+        </div>
+    </div>
+    <p class="caption">Figure 2: Random line test 2. Left: Edge image showing a line with theta=26° and rho=36. Right: Log-scaled accumulator matrix showing the voting results, with the brightest point indicating the detected line parameters.</p>
+    
+    <h3>Random Line Test 3</h3>
+    <div class="results-box">
+        <strong>True theta = 86°, True rho = 30</strong><br>
+        <strong>Estimated theta = 86°, Estimated rho = 29</strong>
+    </div>
+    
+    <div class="image-container">
+        <div class="image-box">
+            <img src="random_line_3.png" alt="Random Line 3 Edge Image">
+            <p>Edge Image</p>
+        </div>
+        <div class="image-box">
+            <img src="random_line_accumulator_3.png" alt="Random Line 3 Accumulator">
+            <p>Accumulator Image</p>
+        </div>
+    </div>
+    <p class="caption">Figure 3: Random line test 3. Left: Edge image showing a line with theta=86° and rho=30. Right: Log-scaled accumulator matrix showing the voting results, with the brightest point indicating the detected line parameters.</p>
+    
+    <div class="page-break"></div>
+    
+    <h2>Questions</h2>
+    
+    <div class="question">
+        <h3>Question 1: Interpretation of Accumulator Curves</h3>
+        
+        <p><strong>Horizontal Line (theta=0°, rho=50):</strong><br>
+        In the horizontal line accumulator image, each edge point on the horizontal line generates a sinusoidal curve in parameter space. Since all edge points lie on the same horizontal line, all their sinusoidal curves intersect at a single point. This intersection occurs at theta=0° (indicating a horizontal line) and rho≈50 (the perpendicular distance from the origin to the line). The bright spot in the accumulator at column index 89 (corresponding to theta=0°) and row index D+50 (corresponding to rho=50) indicates where all the curves converge.</p>
+        
+        <p><strong>Vertical Line (theta=90°, rho=25):</strong><br>
+        For the vertical line, the edge points generate sinusoidal curves that all intersect at theta=90° and rho=25. The intersection at theta=90° indicates a vertical orientation, and rho=25 indicates the line is 25 pixels from the origin along the x-axis. In the accumulator image, this appears as a bright spot at column index 179 (theta=90°) and a row corresponding to rho=25.</p>
+        
+        <p><strong>Positive Diagonal Line (theta=45°, rho=71):</strong><br>
+        The positive diagonal line (running from upper-left to lower-right) produces sinusoidal curves in the accumulator that intersect at theta=45° and rho≈71. The 45° angle indicates the diagonal orientation, and rho=71 (approximately half the diagonal of the image) indicates the perpendicular distance to this centered diagonal line. The bright intersection point appears at the middle column range of the accumulator.</p>
+        
+        <p><strong>Negative Diagonal Line (theta=-45°, rho=-35):</strong><br>
+        For the negative diagonal line (running from lower-left to upper-right), the sinusoidal curves intersect at theta=-45° and rho≈-35. The negative theta indicates the opposite diagonal direction compared to the positive diagonal. The negative rho value indicates that the perpendicular from the origin to the line points in the negative direction. This intersection appears in the left portion of the accumulator (lower theta values) and in the upper portion (negative rho values).</p>
+    </div>
+    
+    <div class="question">
+        <h3>Question 2: Interpretation for Random Line Example</h3>
+        
+        <p><strong>Random Line Test 1 (theta=17°, rho=51):</strong></p>
+        
+        <p>In the accumulator image for random line test 1, each of the edge points along the randomly oriented line generates a sinusoidal curve in the (theta, rho) parameter space. These curves represent all possible lines that could pass through each individual edge point. Since all the edge points in the image lie on the same line, all their sinusoidal curves pass through a common point in parameter space.</p>
+        
+        <p>The intersection of all these curves occurs at theta=17° and rho=50 (estimated). This intersection point represents the unique line that passes through all the edge points:</p>
+        <ul>
+            <li><strong>Theta = 17°</strong> indicates that the line makes a 17-degree angle with the vertical axis, meaning it's nearly vertical but tilted slightly to the right.</li>
+            <li><strong>Rho = 50</strong> indicates that the perpendicular distance from the origin (top-left corner of the image) to the line is approximately 50 pixels.</li>
+        </ul>
+        
+        <p>The bright spot in the accumulator image corresponds to this intersection point. The brightness at this location is proportional to the number of edge points that voted for this particular (theta, rho) combination, which is why it stands out as the maximum value in the accumulator matrix.</p>
+    </div>
+    
+    <div class="question">
+        <h3>Question 3: Most Difficult Part of the Assignment</h3>
+        
+        <p>The most challenging aspect of this lab was correctly handling the coordinate system and index mappings between image space and accumulator space. Specifically:</p>
+        
+        <ol>
+            <li><strong>Understanding the relationship between pixel coordinates (x, y) and the normal form equation:</strong> The formula <code>x * cos(theta) + y * sin(theta) = rho</code> requires careful attention to which dimension corresponds to x (rows) and which to y (columns) in the numpy array representation.</li>
+            
+            <li><strong>Mapping theta and rho to accumulator indices:</strong> Since theta ranges from -89° to 90° and rho ranges from -D to D, I needed to carefully offset these values to valid array indices (0 to 179 for theta columns, and 0 to 2D for rho rows). Getting these mappings wrong initially caused incorrect line detection.</li>
+            
+            <li><strong>Converting between degrees and radians:</strong> The <code>math.cos()</code> and <code>math.sin()</code> functions expect radians, so converting theta from degrees to radians using <code>math.radians()</code> was essential for correct rho calculations.</li>
+            
+            <li><strong>Debugging with the test cases:</strong> The provided test scripts were invaluable for verifying correctness. Without them, it would have been much harder to identify off-by-one errors or incorrect coordinate conventions.</li>
+        </ol>
+    </div>
+    
+    <div class="page-break"></div>
+    
+    <h2>Summary of Results</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Test Case</th>
+                <th>True θ</th>
+                <th>Estimated θ</th>
+                <th>True ρ</th>
+                <th>Estimated ρ</th>
+                <th>Error (θ)</th>
+                <th>Error (ρ)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Random 1</td>
+                <td>17°</td>
+                <td>17°</td>
+                <td>51</td>
+                <td>50</td>
+                <td>0°</td>
+                <td>1 pixel</td>
+            </tr>
+            <tr>
+                <td>Random 2</td>
+                <td>26°</td>
+                <td>26°</td>
+                <td>36</td>
+                <td>35</td>
+                <td>0°</td>
+                <td>1 pixel</td>
+            </tr>
+            <tr>
+                <td>Random 3</td>
+                <td>86°</td>
+                <td>86°</td>
+                <td>30</td>
+                <td>29</td>
+                <td>0°</td>
+                <td>1 pixel</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <p>All estimates are within the acceptable tolerance of 1-2 degrees for theta and 1-2 pixels for rho.</p>
+    
+    <div class="page-break"></div>
+    
+    <h2>Python Code: my_hough_transform.py</h2>
+    
+    <pre><code><span class="comment"># my_hough_transform.py</span>
+<span class="comment">#</span>
+<span class="comment"># Implementation of the Hough transform for line detection.</span>
+<span class="comment"># Created for CSE 107 Lab 5</span>
+
+<span class="comment"># Import numpy</span>
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+
+<span class="comment"># Import math library</span>
+<span class="keyword">import</span> math
+
+
+<span class="keyword">def</span> <span class="function">my_hough_transform</span>(i_edge):
+    <span class="string">"""
+    my_hough_transform - Detect the most prominent line in an edge image using
+    the Hough transform.
+    
+    The function implements the Hough transform by creating an accumulator
+    matrix and voting for each edge point's possible line parameters.
+    
+    Syntax:
+        theta_out, rho_out, accumulator = my_hough_transform(i_edge)
+    
+    Input:
+        i_edge - An edge image (2D numpy array) with value 0 for non-edge points
+                 and 255 for edge points.
+    
+    Output:
+        theta_out - The angle (in degrees) the detected line makes with the 
+                    vertical axis. Ranges from -89 to 90.
+        rho_out - The length of the perpendicular bisector of the detected line.
+        accumulator - The 2D accumulator matrix used in the Hough transform.
+                      Rows correspond to rho values, columns to theta values.
+    
+    History:
+        Created for CSE 107 Lab 5 - Hough Transform
+    """</span>
+    
+    <span class="comment"># a) Determine the size of i_edge</span>
+    size_x, size_y = i_edge.shape
+    
+    <span class="comment"># b) Create an empty accumulator matrix</span>
+    <span class="comment"># Calculate the diagonal size of the image.</span>
+    <span class="comment"># Rho can range from -D to D where D is the diagonal.</span>
+    D = math.floor(math.sqrt(size_x * size_x + size_y * size_y))
+    
+    <span class="comment"># The accumulator matrix has:</span>
+    <span class="comment"># - 2*D+1 rows: one for each possible rho value from -D to D</span>
+    <span class="comment"># - 180 columns: one for each theta value from -89 to 90 degrees</span>
+    accumulator = np.zeros((<span class="number">2</span> * D + <span class="number">1</span>, <span class="number">180</span>), dtype=np.int32)
+    
+    <span class="comment"># c) For every edge point in i_edge, plot the corresponding sinusoid</span>
+    <span class="comment"># in the accumulator matrix.</span>
+    
+    <span class="comment"># Create array of theta values from -89 to 90 degrees (inclusive)</span>
+    theta_values = np.arange(<span class="number">-89</span>, <span class="number">91</span>)
+    
+    <span class="comment"># Pre-compute cosine and sine values for all theta (convert to radians first)</span>
+    theta_radians = np.radians(theta_values)
+    cos_theta = np.cos(theta_radians)
+    sin_theta = np.sin(theta_radians)
+    
+    <span class="comment"># Iterate through all pixels in the edge image</span>
+    <span class="keyword">for</span> x <span class="keyword">in</span> range(size_x):
+        <span class="keyword">for</span> y <span class="keyword">in</span> range(size_y):
+            <span class="comment"># Check if this is an edge point (value == 255)</span>
+            <span class="keyword">if</span> i_edge[x, y] == <span class="number">255</span>:
+                <span class="comment"># For this edge point, compute rho for all possible theta values</span>
+                <span class="comment"># using the normal form: x * cos(theta) + y * sin(theta) = rho</span>
+                rho_values = x * cos_theta + y * sin_theta
+                
+                <span class="comment"># Round rho to nearest integer</span>
+                rho_values = np.round(rho_values).astype(int)
+                
+                <span class="comment"># Vote in the accumulator for each (theta, rho) pair</span>
+                <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">180</span>):
+                    rho = rho_values[i]
+                    
+                    <span class="comment"># Map rho to row index:</span>
+                    <span class="comment"># rho ranges from -D to D</span>
+                    <span class="comment"># row index = rho + D (maps -D to 0, D to 2*D)</span>
+                    row_idx = rho + D
+                    
+                    <span class="comment"># Map theta to column index:</span>
+                    <span class="comment"># theta ranges from -89 to 90</span>
+                    <span class="comment"># column index = theta + 89 (maps -89 to 0, 90 to 179)</span>
+                    col_idx = i  <span class="comment"># Since theta_values[i] = i - 89, col = (i-89)+89 = i</span>
+                    
+                    <span class="comment"># Ensure indices are within bounds and add a vote</span>
+                    <span class="keyword">if</span> <span class="number">0</span> &lt;= row_idx &lt; <span class="number">2</span> * D + <span class="number">1</span>:
+                        accumulator[row_idx, col_idx] += <span class="number">1</span>
+    
+    <span class="comment"># d) Determine the cell with the most votes in the accumulator matrix</span>
+    <span class="comment"># This gives us the theta and rho of the most prominent line.</span>
+    max_idx = np.argmax(accumulator)
+    row_max, col_max = np.unravel_index(max_idx, accumulator.shape)
+    
+    <span class="comment"># Convert accumulator indices back to theta and rho values</span>
+    <span class="comment"># theta = column_index - 89 (reverses the mapping col = theta + 89)</span>
+    theta_out = col_max - <span class="number">89</span>
+    
+    <span class="comment"># rho = row_index - D (reverses the mapping row = rho + D)</span>
+    rho_out = row_max - D
+    
+    <span class="comment"># e) Return the computed values</span>
+    <span class="keyword">return</span> theta_out, rho_out, accumulator</code></pre>
+    
+</body>
+</html>
+
