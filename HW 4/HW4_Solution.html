@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSE 107 - Homework 4 Solutions</title>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Crimson Pro', Georgia, serif;
+            font-size: 12pt;
+            line-height: 1.6;
+            max-width: 8.5in;
+            margin: 0 auto;
+            padding: 0.75in;
+            background: #fff;
+            color: #1a1a1a;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+                max-width: none;
+            }
+            .page-break {
+                page-break-before: always;
+            }
+        }
+        
+        h1 {
+            font-size: 24pt;
+            text-align: center;
+            border-bottom: 3px double #333;
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        h2 {
+            font-size: 16pt;
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 8px;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        h3 {
+            font-size: 13pt;
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        h4 {
+            font-size: 12pt;
+            color: #555;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+        
+        .boxed {
+            border: 2px solid #3498db;
+            padding: 15px 20px;
+            background: #f8fbfd;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .answer-box {
+            border: 2px solid #27ae60;
+            padding: 10px 15px;
+            background: #f0fff4;
+            border-radius: 5px;
+            margin: 12px 0;
+            font-weight: 500;
+        }
+        
+        pre {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 9pt;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            line-height: 1.4;
+        }
+        
+        code {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 10pt;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 15px 0;
+            font-size: 10pt;
+        }
+        
+        th, td {
+            border: 1px solid #bbb;
+            padding: 8px 12px;
+            text-align: center;
+        }
+        
+        th {
+            background: #ecf0f1;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        
+        li {
+            margin-bottom: 6px;
+        }
+        
+        .diagram {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 8pt;
+            background: #fafafa;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 4px;
+            overflow-x: auto;
+            line-height: 1.3;
+            white-space: pre;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        
+        .step-header {
+            background: #3498db;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin: 30px 0;
+        }
+        
+        .summary-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .tree-view {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9pt;
+            background: #fefefe;
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+<h1>CSE 107 - Homework 4 Solutions</h1>
+
+<h2>Problem 1: Hough Transform</h2>
+
+<h3>Part (a): Equation for the Sinusoid at Pixel Location (0,0)</h3>
+
+<p>The Hough Transform converts points from image space to parameter space using the normal form of a line:</p>
+
+<div class="boxed">
+$$\rho = x \cos\theta + y \sin\theta$$
+</div>
+
+<p>where:</p>
+<ul>
+    <li>$\rho$ is the perpendicular distance from the origin to the line</li>
+    <li>$\theta$ is the angle of the perpendicular from the origin</li>
+</ul>
+
+<p><strong>For an edge point at pixel location (0,0):</strong></p>
+
+<p>Substituting $x = 0$ and $y = 0$ into the equation:</p>
+
+$$\rho = 0 \cdot \cos\theta + 0 \cdot \sin\theta$$
+
+<div class="answer-box">
+$$\boxed{\rho = 0}$$
+</div>
+
+<p>This means the sinusoid corresponding to the point (0,0) is simply the horizontal line $\rho = 0$ in parameter space. This line extends across all values of $\theta$ from $0$ to $\pi$ (or $-\pi/2$ to $\pi/2$ depending on the convention).</p>
+
+<h3>Part (b): Other Points Corresponding to This Sinusoid</h3>
+
+<div class="answer-box">
+<strong>Answer: No, there are no other points (at locations other than (0,0)) that correspond to this particular sinusoid.</strong>
+</div>
+
+<p><strong>Explanation:</strong></p>
+
+<p>The sinusoid for any point $(x, y)$ in image space is given by:</p>
+$$\rho = x \cos\theta + y \sin\theta$$
+
+<p>For this equation to produce $\rho = 0$ for <strong>all values of $\theta$</strong> (which is what the sinusoid from (0,0) produces), we would need:</p>
+
+$$x \cos\theta + y \sin\theta = 0 \quad \forall \theta$$
+
+<p>This condition can only be satisfied when both $x = 0$ AND $y = 0$.</p>
+
+<p>For any other point $(x, y) \neq (0, 0)$, the equation produces a true sinusoidal curve that varies with $\theta$, oscillating between positive and negative values of $\rho$. While these other sinusoids will <em>intersect</em> the line $\rho = 0$ at specific values of $\theta$, they do not <em>coincide</em> with it across all $\theta$.</p>
+
+<p><strong>Key Insight:</strong> The point (0,0) is unique because all lines passing through the origin have $\rho = 0$, so its "sinusoid" degenerates into a horizontal line in parameter space.</p>
+
+<hr>
+
+<div class="page-break"></div>
+
+<h2>Problem 2: Region Splitting and Merging (Quadtree Segmentation)</h2>
+
+<h3>Given:</h3>
+<ul>
+    <li>Image size: N = 8 (8×8 pixels)</li>
+    <li>Predicate: $Q(R_i) = TRUE$ if all pixels in $R_i$ have the same intensity</li>
+    <li>Image has two intensity values (white and gray)</li>
+</ul>
+
+<h3>Binary Representation of the Image:</h3>
+
+<pre>
+Row\Col  0   1   2   3   4   5   6   7
+  0      W   W   W   W   W   W   W   W
+  1      W   W   W   W   W   W   W   W
+  2      W   W   G   G   G   G   W   W
+  3      W   W   G   W   W   G   W   W
+  4      W   W   G   W   W   G   W   W
+  5      W   W   G   G   G   G   W   W
+  6      W   W   W   W   W   W   W   W
+  7      W   W   W   W   W   W   W   W
+
+W = White (intensity 1)
+G = Gray (intensity 0)
+</pre>
+
+<h3>Quadtree Splitting Process:</h3>
+
+<h4>Level 0 (Root): R - Entire 8×8 image</h4>
+<ul>
+    <li>Contains both white and gray pixels</li>
+    <li>$Q(R) = FALSE$ → <strong>SPLIT</strong></li>
+</ul>
+
+<h4>Level 1: Split into four 4×4 quadrants</h4>
+
+<table>
+    <tr><th>Quadrant</th><th>Position</th><th>Contents</th><th>Q(R<sub>i</sub>)</th><th>Action</th></tr>
+    <tr><td>R<sub>1</sub></td><td>Top-left (rows 0-3, cols 0-3)</td><td>Mixed (W and G)</td><td>FALSE</td><td>SPLIT</td></tr>
+    <tr><td>R<sub>2</sub></td><td>Top-right (rows 0-3, cols 4-7)</td><td>Mixed (W and G)</td><td>FALSE</td><td>SPLIT</td></tr>
+    <tr><td>R<sub>3</sub></td><td>Bottom-left (rows 4-7, cols 0-3)</td><td>Mixed (W and G)</td><td>FALSE</td><td>SPLIT</td></tr>
+    <tr><td>R<sub>4</sub></td><td>Bottom-right (rows 4-7, cols 4-7)</td><td>Mixed (W and G)</td><td>FALSE</td><td>SPLIT</td></tr>
+</table>
+
+<h4>Level 2: Split each 4×4 quadrant into 2×2 sub-quadrants</h4>
+
+<p><strong>R<sub>1</sub> Sub-quadrants:</strong></p>
+<table>
+    <tr><th>Region</th><th>Position</th><th>Contents</th><th>Q(R<sub>i</sub>)</th><th>Action</th></tr>
+    <tr><td>R<sub>11</sub></td><td>rows 0-1, cols 0-1</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>12</sub></td><td>rows 0-1, cols 2-3</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>13</sub></td><td>rows 2-3, cols 0-1</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>14</sub></td><td>rows 2-3, cols 2-3</td><td>Mixed (G and W)</td><td>FALSE</td><td>SPLIT</td></tr>
+</table>
+
+<p><strong>R<sub>2</sub> Sub-quadrants:</strong></p>
+<table>
+    <tr><th>Region</th><th>Position</th><th>Contents</th><th>Q(R<sub>i</sub>)</th><th>Action</th></tr>
+    <tr><td>R<sub>21</sub></td><td>rows 0-1, cols 4-5</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>22</sub></td><td>rows 0-1, cols 6-7</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>23</sub></td><td>rows 2-3, cols 4-5</td><td>Mixed (G and W)</td><td>FALSE</td><td>SPLIT</td></tr>
+    <tr><td>R<sub>24</sub></td><td>rows 2-3, cols 6-7</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+</table>
+
+<p><strong>R<sub>3</sub> Sub-quadrants:</strong></p>
+<table>
+    <tr><th>Region</th><th>Position</th><th>Contents</th><th>Q(R<sub>i</sub>)</th><th>Action</th></tr>
+    <tr><td>R<sub>31</sub></td><td>rows 4-5, cols 0-1</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>32</sub></td><td>rows 4-5, cols 2-3</td><td>Mixed (G and W)</td><td>FALSE</td><td>SPLIT</td></tr>
+    <tr><td>R<sub>33</sub></td><td>rows 6-7, cols 0-1</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>34</sub></td><td>rows 6-7, cols 2-3</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+</table>
+
+<p><strong>R<sub>4</sub> Sub-quadrants:</strong></p>
+<table>
+    <tr><th>Region</th><th>Position</th><th>Contents</th><th>Q(R<sub>i</sub>)</th><th>Action</th></tr>
+    <tr><td>R<sub>41</sub></td><td>rows 4-5, cols 4-5</td><td>Mixed (G and W)</td><td>FALSE</td><td>SPLIT</td></tr>
+    <tr><td>R<sub>42</sub></td><td>rows 4-5, cols 6-7</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>43</sub></td><td>rows 6-7, cols 4-5</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+    <tr><td>R<sub>44</sub></td><td>rows 6-7, cols 6-7</td><td>All White</td><td>TRUE</td><td>STOP</td></tr>
+</table>
+
+<h4>Level 3: Split remaining 2×2 regions into 1×1 pixels</h4>
+
+<p><strong>R<sub>14</sub></strong> (rows 2-3, cols 2-3): R<sub>141</sub>: (2,2) = G, R<sub>142</sub>: (2,3) = G, R<sub>143</sub>: (3,2) = G, R<sub>144</sub>: (3,3) = W</p>
+
+<p><strong>R<sub>23</sub></strong> (rows 2-3, cols 4-5): R<sub>231</sub>: (2,4) = G, R<sub>232</sub>: (2,5) = G, R<sub>233</sub>: (3,4) = W, R<sub>234</sub>: (3,5) = G</p>
+
+<p><strong>R<sub>32</sub></strong> (rows 4-5, cols 2-3): R<sub>321</sub>: (4,2) = G, R<sub>322</sub>: (4,3) = W, R<sub>323</sub>: (5,2) = G, R<sub>324</sub>: (5,3) = G</p>
+
+<p><strong>R<sub>41</sub></strong> (rows 4-5, cols 4-5): R<sub>411</sub>: (4,4) = W, R<sub>412</sub>: (4,5) = G, R<sub>413</sub>: (5,4) = G, R<sub>414</sub>: (5,5) = G</p>
+
+<hr>
+
+<h3>Part (a): Segmented Image with Labeled Quadrants</h3>
+
+<pre class="diagram">
+    Col: 0    1    2    3    4    5    6    7
+       ┌─────────┬─────────┬─────────┬─────────┐
+Row 0  │         │         │         │         │
+       │   R₁₁   │   R₁₂   │   R₂₁   │   R₂₂   │
+Row 1  │   (W)   │   (W)   │   (W)   │   (W)   │
+       ├────┬────┼────┬────┼────┬────┼─────────┤
+Row 2  │    │R₁₄₁│R₁₄₂│    │R₂₃₁│R₂₃₂│         │
+       │R₁₃ │ G  │ G  │    │ G  │ G  │   R₂₄   │
+       │(W) ├────┼────┤    ├────┼────┤   (W)   │
+Row 3  │    │R₁₄₃│R₁₄₄│    │R₂₃₃│R₂₃₄│         │
+       │    │ G  │ W  │    │ W  │ G  │         │
+       ├────┼────┼────┼────┼────┼────┼─────────┤
+Row 4  │    │R₃₂₁│R₃₂₂│    │R₄₁₁│R₄₁₂│         │
+       │R₃₁ │ G  │ W  │    │ W  │ G  │   R₄₂   │
+       │(W) ├────┼────┤    ├────┼────┤   (W)   │
+Row 5  │    │R₃₂₃│R₃₂₄│    │R₄₁₃│R₄₁₄│         │
+       │    │ G  │ G  │    │ G  │ G  │         │
+       ├────┴────┼─────────┼─────────┴─────────┤
+Row 6  │         │         │         │         │
+       │   R₃₃   │   R₃₄   │   R₄₃   │   R₄₄   │
+Row 7  │   (W)   │   (W)   │   (W)   │   (W)   │
+       └─────────┴─────────┴─────────┴─────────┘
+</pre>
+
+<hr>
+
+<h3>Part (b): Quadtree Structure</h3>
+
+<div class="tree-view">
+R (8×8) - Mixed
+├── R₁ (4×4) - Mixed
+│   ├── R₁₁ (2×2) - WHITE ✓
+│   ├── R₁₂ (2×2) - WHITE ✓
+│   ├── R₁₃ (2×2) - WHITE ✓
+│   └── R₁₄ (2×2) - Mixed
+│       ├── R₁₄₁ (1×1) - GRAY ✓
+│       ├── R₁₄₂ (1×1) - GRAY ✓
+│       ├── R₁₄₃ (1×1) - GRAY ✓
+│       └── R₁₄₄ (1×1) - WHITE ✓
+├── R₂ (4×4) - Mixed
+│   ├── R₂₁ (2×2) - WHITE ✓
+│   ├── R₂₂ (2×2) - WHITE ✓
+│   ├── R₂₃ (2×2) - Mixed
+│   │   ├── R₂₃₁ (1×1) - GRAY ✓
+│   │   ├── R₂₃₂ (1×1) - GRAY ✓
+│   │   ├── R₂₃₃ (1×1) - WHITE ✓
+│   │   └── R₂₃₄ (1×1) - GRAY ✓
+│   └── R₂₄ (2×2) - WHITE ✓
+├── R₃ (4×4) - Mixed
+│   ├── R₃₁ (2×2) - WHITE ✓
+│   ├── R₃₂ (2×2) - Mixed
+│   │   ├── R₃₂₁ (1×1) - GRAY ✓
+│   │   ├── R₃₂₂ (1×1) - WHITE ✓
+│   │   ├── R₃₂₃ (1×1) - GRAY ✓
+│   │   └── R₃₂₄ (1×1) - GRAY ✓
+│   ├── R₃₃ (2×2) - WHITE ✓
+│   └── R₃₄ (2×2) - WHITE ✓
+└── R₄ (4×4) - Mixed
+    ├── R₄₁ (2×2) - Mixed
+    │   ├── R₄₁₁ (1×1) - WHITE ✓
+    │   ├── R₄₁₂ (1×1) - GRAY ✓
+    │   ├── R₄₁₃ (1×1) - GRAY ✓
+    │   └── R₄₁₄ (1×1) - GRAY ✓
+    ├── R₄₂ (2×2) - WHITE ✓
+    ├── R₄₃ (2×2) - WHITE ✓
+    └── R₄₄ (2×2) - WHITE ✓
+</div>
+
+<p><strong>Summary:</strong></p>
+<ul>
+    <li>Total leaf nodes: 28</li>
+    <li>White regions: 16 (12 at 2×2 level + 4 at 1×1 level)</li>
+    <li>Gray regions: 12 (all at 1×1 level)</li>
+</ul>
+
+<hr>
+
+<div class="page-break"></div>
+
+<h2>Problem 3: Watershed Segmentation</h2>
+
+<h3>Given Cross-Section Data:</h3>
+
+<p>From the figure, the intensity values at each position are:</p>
+
+<table>
+    <tr><th>Position (x)</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th></tr>
+    <tr><td>Intensity</td><td>0</td><td>0</td><td>3</td><td>7</td><td>5</td><td>4</td><td>6</td><td>5</td><td>0</td><td>1</td><td>3</td><td>1</td><td>2</td><td>2</td><td>0</td></tr>
+</table>
+
+<h3>Identifying Catchment Basins (Local Minima):</h3>
+
+<p><strong>Local minima locations:</strong></p>
+<ol>
+    <li><strong>Basin 1:</strong> x = 1-2 (intensity 0) - Left edge minimum</li>
+    <li><strong>Basin 2:</strong> x = 9 (intensity 0) - Central minimum</li>
+    <li><strong>Basin 3:</strong> x = 15 (intensity 0) - Right edge minimum</li>
+</ol>
+
+<h3>Step-by-Step Watershed Algorithm:</h3>
+
+<p>The algorithm "floods" from the bottom up, filling from local minima. Dams are built where water from different basins would meet.</p>
+
+<hr>
+
+<div class="step-header">Step 0: Initial State (Water Level = 0)</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─          │ │   ┌─┐
+    5 ─        ┌─┘ │   │ └─┐
+    4 ─        │   └───┘   │
+    3 ─    ┌───┘           │   ┌─┐
+    2 ─    │               │   │ └───┐
+    1 ─    │               │ ┌─┘     │
+    0 ─ ▓▓▓┘               └▓┘       └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+
+▓ = Water at level 0 (fills minima at x=1,2,9,15)
+</pre>
+
+<p>Three basins begin filling:</p>
+<ul>
+    <li>Basin 1: x = 1, 2</li>
+    <li>Basin 2: x = 9</li>
+    <li>Basin 3: x = 15</li>
+</ul>
+
+<hr>
+
+<div class="step-header">Step 1: Water Level = 1</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─          │ │   ┌─┐
+    5 ─        ┌─┘ │   │ └─┐
+    4 ─        │   └───┘   │
+    3 ─    ┌───┘           │   ┌─┐
+    2 ─    │               │   │ └───┐
+    1 ─ ░░░│               │ ░░┘     │░░░
+    0 ─ ▓▓▓┘               └▓▓       └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+
+░ = Water at level 1
+▓ = Water at level 0
+</pre>
+
+<ul>
+    <li>Basin 1 expands slightly (still x = 1, 2)</li>
+    <li>Basin 2 expands to x = 9, 10, 12 (since intensity at x=10 and x=12 is 1)</li>
+    <li>Basin 3 expands to x = 14, 15</li>
+</ul>
+
+<hr>
+
+<div class="step-header">Step 2: Water Level = 2</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─          │ │   ┌─┐
+    5 ─        ┌─┘ │   │ └─┐
+    4 ─        │   └───┘   │
+    3 ─    ┌───┘           │   ┌─┐
+    2 ─ ░░░│               │ ░░│ └░░░│░░░
+    1 ─ ░░░│               │ ░░┘     │░░░
+    0 ─ ▓▓▓┘               └▓▓       └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+
+Water level 2: Basin 2 and Basin 3 would meet at x=13
+</pre>
+
+<div class="answer-box">
+<strong>DAM 1 built between positions 12 and 13</strong> to separate Basin 2 from Basin 3.
+</div>
+
+<ul>
+    <li>Basin 2: x = 9, 10, 11, 12</li>
+    <li>Basin 3: x = 13, 14, 15</li>
+</ul>
+
+<hr>
+
+<div class="step-header">Step 3: Water Level = 3</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─          │ │   ┌─┐
+    5 ─        ┌─┘ │   │ └─┐
+    4 ─        │   └───┘   │
+    3 ─ ░░░┌───┘           │ ░░┌▓┐░░░░░░░
+    2 ─ ░░░│               │ ░░│▓│░░░│░░░
+    1 ─ ░░░│               │ ░░┘▓    │░░░
+    0 ─ ▓▓▓┘               └▓▓  ▓    └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+                                    ▓ = DAM
+</pre>
+
+<ul>
+    <li>Basin 1: x = 1, 2, 3</li>
+    <li>Basin 2: x = 9, 10, 11, 12 (blocked by dam at right)</li>
+    <li>Basin 3: x = 13, 14, 15 (blocked by dam at left)</li>
+</ul>
+
+<hr>
+
+<div class="step-header">Step 4: Water Level = 4</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─          │ │   ┌─┐
+    5 ─        ┌─┘ │   │ └─┐
+    4 ─ ░░░░░░░│   └───┘   │░░░┌▓┐░░░░░░░
+    3 ─ ░░░┌───┘           │░░░│▓│░░░░░░░
+    2 ─ ░░░│               │░░░│▓│░░░│░░░
+    1 ─ ░░░│               │░░░┘▓    │░░░
+    0 ─ ▓▓▓┘               └▓▓▓ ▓    └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+</pre>
+
+<ul>
+    <li>Basin 1: x = 1, 2, 3 (extends toward peak at x=4)</li>
+    <li>Basin 2: x = 6, 8, 9, 10, 11, 12 (extends from x=6 and x=8)</li>
+</ul>
+
+<p>Basin 1 and Basin 2 approaching each other...</p>
+
+<hr>
+
+<div class="step-header">Step 5: Water Level = 5</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─          │ │   ┌─┐
+    5 ─ ░░░░░░░┌─┘ │░░░│ └─┐░░░┌▓┐░░░░░░░
+    4 ─ ░░░░░░░│   └───┘   │░░░│▓│░░░░░░░
+    3 ─ ░░░┌───┘           │░░░│▓│░░░░░░░
+    2 ─ ░░░│               │░░░│▓│░░░│░░░
+    1 ─ ░░░│               │░░░┘▓    │░░░
+    0 ─ ▓▓▓┘               └▓▓▓ ▓    └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+
+Water from Basin 1 and Basin 2 would meet!
+</pre>
+
+<div class="answer-box">
+<strong>DAM 2 built between positions 4 and 5</strong> (at the ridge between the two basins)
+</div>
+
+<hr>
+
+<div class="step-header">Step 6: Water Level = 6</div>
+
+<pre class="diagram">
+Intensity
+    7 ─          ┌─┐
+    6 ─ ░░░░░░░░▓│ │░░░┌─┐░░░░░┌▓┐░░░░░░░
+    5 ─ ░░░░░░░┌▓┘ │░░░│ └─┐░░░│▓│░░░░░░░
+    4 ─ ░░░░░░░│▓  └───┘   │░░░│▓│░░░░░░░
+    3 ─ ░░░┌───┘▓          │░░░│▓│░░░░░░░
+    2 ─ ░░░│    ▓          │░░░│▓│░░░│░░░
+    1 ─ ░░░│    ▓          │░░░┘▓    │░░░
+    0 ─ ▓▓▓┘    ▓          └▓▓▓ ▓    └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+                 ▓              ▓ = DAMS
+</pre>
+
+<p>Basin 2 fills around the internal ridge at x=7. This is within the same basin, so no new dam needed.</p>
+
+<hr>
+
+<div class="step-header">Step 7: Water Level = 7 (Final)</div>
+
+<pre class="diagram">
+Intensity
+    7 ─ ░░░░░░░░▓┌─┐░░░░░░░░░░░┌▓┐░░░░░░░
+    6 ─ ░░░░░░░░▓│ │░░░┌─┐░░░░░│▓│░░░░░░░
+    5 ─ ░░░░░░░┌▓┘ │░░░│ └─┐░░░│▓│░░░░░░░
+    4 ─ ░░░░░░░│▓  └───┘   │░░░│▓│░░░░░░░
+    3 ─ ░░░┌───┘▓          │░░░│▓│░░░░░░░
+    2 ─ ░░░│    ▓          │░░░│▓│░░░│░░░
+    1 ─ ░░░│    ▓          │░░░┘▓    │░░░
+    0 ─ ▓▓▓┘    ▓          └▓▓▓ ▓    └▓▓▓
+        ───┴─┴─┴─┴─┴─┴─┴─┴─┴─┴──┴──┴──┴──┴──┴───→ x
+        1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+                 ▓              ▓ = DAMS
+</pre>
+
+<hr>
+
+<h3>Final Segmentation Result:</h3>
+
+<p><strong>Three watershed regions (catchment basins) identified:</strong></p>
+
+<table class="summary-table">
+    <tr><th>Segment</th><th>Positions</th><th>Description</th></tr>
+    <tr><td>Basin 1</td><td>x = 1, 2, 3, 4</td><td>Left region</td></tr>
+    <tr><td>Basin 2</td><td>x = 5, 6, 7, 8, 9, 10, 11, 12</td><td>Central region</td></tr>
+    <tr><td>Basin 3</td><td>x = 13, 14, 15</td><td>Right region</td></tr>
+</table>
+
+<p><strong>Two dams (watershed lines) constructed:</strong></p>
+
+<table class="summary-table">
+    <tr><th>Dam</th><th>Location</th><th>Separates</th></tr>
+    <tr><td>Dam 1</td><td>Between x = 4 and x = 5</td><td>Basin 1 and Basin 2</td></tr>
+    <tr><td>Dam 2</td><td>Between x = 12 and x = 13</td><td>Basin 2 and Basin 3</td></tr>
+</table>
+
+<h3>Summary Diagram:</h3>
+
+<pre class="diagram">
+        ┌────────────────────────────────────────────────────┐
+        │                                                    │
+        │  █ █ █ █ ║ █ █ █ █ █ █ █ █ ║ █ █ █                │
+        │                                                    │
+        │  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15       │
+        │  └──BASIN 1──┘└────────BASIN 2────────┘└─BASIN 3─┘ │
+        │              ║                        ║            │
+        │            DAM 1                    DAM 2          │
+        └────────────────────────────────────────────────────┘
+</pre>
+
+<p>The watershed segmentation successfully divides the 1D intensity profile into three distinct regions based on the local minima and the construction of dams at the points where water from different catchment basins would merge.</p>
+
+<hr>
+
+<p style="text-align: center; font-style: italic; color: #666; margin-top: 40px;">End of Homework 4 Solutions</p>
+
+</body>
+</html>
+
